@@ -27,14 +27,13 @@ great_final$centre[great_final$centre == 21] <- 20
 
 f <- afib ~ 1
 s <- afib ~ gender + bmi + age + sbp + dbp + hr + bnp +
-  I(bmi^2) + I(age^2) + I(sbp^2) + I(dbp^2) + I(hr^2) + I(bnp^2) 
+  I(bmi^2) + I(age^2) + I(sbp^2) + I(dbp^2) + I(hr^2) + I(bnp^2)
 
 library(splines)
-s <- afib ~ gender + ns(bmi, df = 3) + ns(age, df = 3) + ns(sbp, df = 3) + ns(dbp, df = 3) + ns(hr, df = 3) + ns(bnp, df = 3)
 
 ### Strategy 1: Ignoring heterogeneity
 # Model 1: Ignoring heterogeneity
-m1 <- metapred(data = great_final, 
+suppressMessages(m1 <- metapred(data = great_final, 
                strata = "centre", 
                formula = f, 
                scope = s, 
@@ -42,25 +41,25 @@ m1 <- metapred(data = great_final,
                family = binomial,
                perfFUN = list("mse", "bin.cal.int", "cal.slope", "auc"),
                genFUN = list("abs.mean", "rema.beta", "rema.tau"),
-               center = TRUE)
+               center = TRUE))
 
 
 ### Strategy 2: Weighted Meta-Analysis
 # Model 2a: Weighted Meta-Analysis: Mean effect
-m2a <- update(m1, genFUN = list("rema", "rema.beta", "rema.tau"), lambda = 1)
+suppressMessages(m2a <- update(m1, genFUN = list("rema", "rema.beta", "rema.tau"), lambda = 1))
 
 # Model 2b: Weighted Meta-Analysis: Mean effect + heterogeneity
-m2b <- update(m1, genFUN = list("rema", "rema.beta", "rema.tau"), lambda = 1/2)
+suppressMessages(m2b <- update(m1, genFUN = list("rema", "rema.beta", "rema.tau"), lambda = 1/2))
 
 # Model 2c: Weighted Meta-Analysis: Heterogeneity
-m2c <- update(m1, genFUN = list("rema", "rema.beta", "rema.tau"), lambda = 0)
+suppressMessages(m2c <- update(m1, genFUN = list("rema", "rema.beta", "rema.tau"), lambda = 0))
 
 ### Strategy 3: Heterogeneity only
 # Model 3: Heterogeneity only: parametric
-m3a <- update(m1, genFUN = list("SD", "rema.beta", "rema.tau"))
+suppressMessages(m3a <- update(m1, genFUN = list("SD", "rema.beta", "rema.tau")))
 
 # Model 3: Heterogeneity only: non-parametric
-m3b <- update(m1, genFUN = list("gmd", "rema.beta", "rema.tau"))
+suppressMessages(m3b <- update(m1, genFUN = list("gmd", "rema.beta", "rema.tau")))
 
 models <- list(m1 = m1, m2a = m2a, m2b = m2b, m2c = m2c, m3a = m3a, m3b = m3b)
 
@@ -89,7 +88,8 @@ all_coefs_manuscript[is.na(all_coefs_manuscript)] <- ""
 all_coefs_manuscript
 data.frame(all_coefs_manuscript, stringsAsFactors = TRUE)
 
-# write.csv(data.frame(all_coefs_manuscript, stringsAsFactors = TRUE), file = "ignore/tables/GREAT CS with selection - coefs aug 2019.csv")
+write.csv(data.frame(all_coefs_manuscript, stringsAsFactors = TRUE),
+          file = "ignore/tables/GREAT CS with selection - coefs sep 2020.csv")
 
 
 ### Performance and Generalizability
@@ -109,17 +109,17 @@ all <- rbind(t(slopes), t(ints), t(aucs))
 
 all_formatted <- format_summary(all)
 # Combined
-# write.csv(all_formatted, file =  "ignore/tables/GREAT CS with selection - ma of perfs - aug 2019.csv")
+write.csv(all_formatted, file =  "ignore/tables/GREAT CS with selection - ma of perfs - sep 2020.csv")
 
 
 ### Forest plots
 # Calibration intercept
-# mapply(pdf_forest, models = models[1:6], m = 1:6, stat_id = 2)
+mapply(pdf_forest, models = models[1:6], m = 1:6, stat_id = 2)
 
 # Calibration slope
-# mapply(pdf_forest, models = models[1:6], m = 1:6, stat_id = 3)
+mapply(pdf_forest, models = models[1:6], m = 1:6, stat_id = 3)
 
 # AUC
-# mapply(pdf_forest, models = models[1:6], m = 1:6, stat_id = 4)
+mapply(pdf_forest, models = models[1:6], m = 1:6, stat_id = 4)
 
 ##### The End. ##### 
