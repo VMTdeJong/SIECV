@@ -5,9 +5,9 @@ n.iter <- 1000
 m <- 1
 
 great_mitml <- jomoImpute(formula = as.formula("bmi+age+sbp+dbp+hr+bnp+afib~gender+lvef+(1|centre)"), 
-                     random.L1 = "full",  # of "none" voor homoscedastic
+                     random.L1 = "full",  # or "none" for homoscedastic
                      data = great_unimputed, 
-                     m = m, # 1 imputatien
+                     m = m, # 1 imputation
                      n.burn = n_burnin,
                      n.iter = n.iter)
 
