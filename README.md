@@ -1,5 +1,5 @@
 # SIECV
-Stepwise Internal-External Cross-Validation for developing a model for predicting Atrial Fibrillation. This is code for an analysis presented in: 
+Stepwise Internal-External Cross-Validation for developing a model for predicting Atrial Fibrillation. 
 
 For questions, email:
 - V.M.T.deJong-2@umcutrecht.nl
